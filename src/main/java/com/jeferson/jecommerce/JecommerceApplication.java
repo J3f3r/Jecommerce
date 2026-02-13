@@ -21,7 +21,7 @@ public class JecommerceApplication implements CommandLineRunner {
 		// esse metodo gera a senha embaralhada pelo BCrypt para ser usado depois
 		System.out.println("Encode = " + passwordEncoder.encode("123456"));
 		
-		boolean result = passwordEncoder.matches("123456", "cole o hash aqui");
+		boolean result = passwordEncoder.matches("123456", "$2a$10$3oWxei.vd8F8iA32BetcOedPSuxtUg2GPE1InPcvcWGm1mbqmYhVq");
 		System.out.println("RESULTADO = " + result);
 	}
 
