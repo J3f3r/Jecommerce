@@ -1,11 +1,5 @@
 package com.jeferson.jecommerce.services;
 
-import com.jeferson.jecommerce.dto.ProductDTO;
-import com.jeferson.jecommerce.entities.Product;
-import com.jeferson.jecommerce.repositories.ProductRepository;
-import com.jeferson.jecommerce.services.exceptions.DatabaseException;
-import com.jeferson.jecommerce.services.exceptions.ResourceNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -14,7 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import com.jeferson.jecommerce.dto.CategoryDTO;
+import com.jeferson.jecommerce.dto.ProductDTO;
+import com.jeferson.jecommerce.entities.Category;
+import com.jeferson.jecommerce.entities.Product;
+import com.jeferson.jecommerce.repositories.ProductRepository;
+import com.jeferson.jecommerce.services.exceptions.DatabaseException;
+import com.jeferson.jecommerce.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
 
 
 @Service
@@ -48,6 +50,7 @@ public class ProductService {
         entity.setPrice(dto.getPrice());
         entity.setImgUrl(dto.getImgUrl());
         // aqui também poderia usar o método copyDtoToEntity(dto, entity);
+        copyDtoToEntity(dto, entity);
         entity = repository.save(entity);
 
         return new ProductDTO(entity);
@@ -84,5 +87,13 @@ public class ProductService {
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setImgUrl(dto.getImgUrl());
+        
+     // Limpa as categorias que estavam na entidade e adiciona as novas do DTO
+        entity.getCategories().clear();
+        for (CategoryDTO catDto : dto.getCategories()) {
+            Category cat = new Category();
+            cat.setId(catDto.getId());
+            entity.getCategories().add(cat);
+        }
     }
 }

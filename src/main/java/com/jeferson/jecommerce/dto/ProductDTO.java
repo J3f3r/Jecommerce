@@ -1,13 +1,18 @@
 package com.jeferson.jecommerce.dto;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jeferson.jecommerce.entities.Product;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public class ProductDTO {
     private Long id;
+    private List<CategoryDTO> categories = new ArrayList<>();// coloquei agora
 
     @Size(min = 3, max = 80, message = "Nome precisa ter de 3 a 80 caracteres")
     @NotBlank(message = "Campo requerido")
@@ -57,5 +62,9 @@ public class ProductDTO {
 
     public String getImgUrl() {
         return imgUrl;
+    }
+    
+    public List<CategoryDTO> getCategories() {
+        return categories;
     }
 }
