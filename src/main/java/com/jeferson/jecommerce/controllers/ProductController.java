@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.jeferson.jecommerce.dto.ProductDTO;
+import com.jeferson.jecommerce.dto.ProductMinDTO;
 import com.jeferson.jecommerce.services.ProductService;
 
 import jakarta.validation.Valid;
@@ -36,9 +38,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable){
-        Page<ProductDTO> dto = service.findAll(pageable);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<Page<ProductMinDTO>> findAll(
+            @RequestParam(value = "name", defaultValue = "") String name, 
+            Pageable pageable) {
+        Page<ProductMinDTO> list = service.findAll(name, pageable); 
+        return ResponseEntity.ok(list);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")

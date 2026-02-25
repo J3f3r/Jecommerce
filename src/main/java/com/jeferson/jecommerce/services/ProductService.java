@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jeferson.jecommerce.dto.CategoryDTO;
 import com.jeferson.jecommerce.dto.ProductDTO;
+import com.jeferson.jecommerce.dto.ProductMinDTO;
 import com.jeferson.jecommerce.entities.Category;
 import com.jeferson.jecommerce.entities.Product;
 import com.jeferson.jecommerce.repositories.ProductRepository;
@@ -37,9 +38,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(Pageable pageable){
-        Page<Product> result = repository.findAll(pageable);
-        return result.map(x -> new ProductDTO(x));
+    public Page<ProductMinDTO> findAll(String name, Pageable pageable) {
+        Page<Product> result = repository.searchByName(name, pageable);
+        return result.map(x -> new ProductMinDTO(x));
     }
 
     @Transactional
