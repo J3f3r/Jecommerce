@@ -77,3 +77,6 @@ INSERT INTO tb_order_item (order_id, product_id, quantity, price) VALUES (3, 1, 
 
 INSERT INTO tb_payment (order_id, moment) VALUES (1, TIMESTAMP WITH TIME ZONE '2022-07-25T15:00:00Z');
 INSERT INTO tb_payment (order_id, moment) VALUES (2, TIMESTAMP WITH TIME ZONE '2022-07-30T11:00:00Z');
+
+-- Criar visualização organizada por ID de produto
+CREATE VIEW VW_PRODUTOS_POR_CATEGORIA AS SELECT PRODUCT_ID, CATEGORY_ID FROM TB_PRODUCT_CATEGORY ORDER BY PRODUCT_ID ASC;

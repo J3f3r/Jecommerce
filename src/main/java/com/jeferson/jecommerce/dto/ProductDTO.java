@@ -4,16 +4,17 @@ package com.jeferson.jecommerce.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jeferson.jecommerce.entities.Category;
 import com.jeferson.jecommerce.entities.Product;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public class ProductDTO {
     private Long id;
-    private List<CategoryDTO> categories = new ArrayList<>();// coloquei agora
-
+    
     @Size(min = 3, max = 80, message = "Nome precisa ter de 3 a 80 caracteres")
     @NotBlank(message = "Campo requerido")
     private String name;
@@ -25,6 +26,9 @@ public class ProductDTO {
     @Positive(message = "O preço precisa ser positivo")
     private Double price;
     private String imgUrl;
+    
+    @NotEmpty(message = "Deve ter pelo menos uma categoria")
+    private List<CategoryDTO> categories = new ArrayList<>();
 
     public ProductDTO(){}
 
@@ -36,12 +40,16 @@ public class ProductDTO {
         this.imgUrl = imgUrl;
     }
 
-    public ProductDTO(Product entity){
+    public ProductDTO(Product entity){// copia os dados basicos
         id = entity.getId();
         name = entity.getName();
         description = entity.getDescription();
         price = entity.getPrice();
         imgUrl = entity.getImgUrl();
+        
+        for (Category cat : entity.getCategories()) {// copia tambem as categorias e cria dtos associados a entidade ProductDTO
+        	categories.add(new CategoryDTO(cat));
+        }
     }
 
     public Long getId() {

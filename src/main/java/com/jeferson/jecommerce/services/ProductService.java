@@ -91,6 +91,7 @@ public class ProductService {
         
      // Limpa as categorias que estavam na entidade e adiciona as novas do DTO
         entity.getCategories().clear();
+        // ao inserir um novo produto, suas categorias são copiada e salva em um novo dto que será adicionada na entidade Product no banco de dados
         for (CategoryDTO catDto : dto.getCategories()) {
             Category cat = new Category();
             cat.setId(catDto.getId());
