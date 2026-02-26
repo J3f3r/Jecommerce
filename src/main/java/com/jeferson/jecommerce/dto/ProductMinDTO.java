@@ -5,7 +5,6 @@ import com.jeferson.jecommerce.entities.Product;
 
 public class ProductMinDTO {
     private Long id;
-    //private List<CategoryDTO> categories = new ArrayList<>();// coloquei agora
     private String name;
     private Double price;
     private String imgUrl;
@@ -42,8 +41,4 @@ public class ProductMinDTO {
     public String getImgUrl() {
         return imgUrl;
     }
-    
-//    public List<CategoryDTO> getCategories() {
-//        return categories;
-//    }
 }
