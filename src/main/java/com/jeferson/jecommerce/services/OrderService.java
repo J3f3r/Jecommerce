@@ -45,14 +45,14 @@ public class OrderService {
 	    }
 
 	    @Transactional
-		public OrderDTO insert(OrderDTO dto) {
+		public OrderDTO insert(OrderDTO dto) {// cliente insere pedido (order) e retorna essa lista de informacoes
 			
 	    	Order order = new Order();
 	    	
 	    	order.setMoment(Instant.now());
-	    	order.setStatus(OrderStatus.WAITING_PAYMENT);
+	    	order.setStatus(OrderStatus.WAITING_PAYMENT);// aguardando pagamento
 	    	
-	    	User user = userService.authenticated();
+	    	User user = userService.authenticated();// ususário logado
 	    	order.setClient(user);
 	    	
 	    	for (OrderItemDTO itemDto : dto.getItems()) {

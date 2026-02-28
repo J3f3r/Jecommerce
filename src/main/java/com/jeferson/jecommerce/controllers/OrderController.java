@@ -25,14 +25,14 @@ public class OrderController {
 	@Autowired
 	private OrderService service;
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<OrderDTO> findById(@PathVariable Long id){
 		OrderDTO dto = service.findById(id);
 		return ResponseEntity.ok(dto);
 	}
 	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")// tem usuario que nao eh admini
     @PostMapping
     public ResponseEntity<OrderDTO> insert(@Valid @RequestBody OrderDTO dto){
         dto = service.insert(dto);

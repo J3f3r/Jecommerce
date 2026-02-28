@@ -32,6 +32,8 @@ public class OrderDTO {
 		this.items = items;
 	}
 	
+	public OrderDTO() {}
+	
 	public OrderDTO(Order entity) {
 		id = entity.getId();
 		moment = entity.getMoment();
