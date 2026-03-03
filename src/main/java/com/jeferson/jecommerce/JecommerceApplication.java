@@ -4,10 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JecommerceApplication {
-
+public class JecommerceApplication{
+	
 	public static void main(String[] args) {
 		SpringApplication.run(JecommerceApplication.class, args);
 	}
-
 }
