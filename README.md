@@ -1,85 +1,72 @@
-## 📚 README.md: Jecommerce - Sistema de E-commerce com Spring Boot e JPA
+Jecommerce - Spring Boot API 🚀
+Este projeto é uma aplicação back-end robusta para um sistema de e-commerce, construída com Spring Boot 3.4.2 e Java 17/21. A aplicação utiliza JPA/Hibernate para persistência de dados e foi migrada de um ambiente de teste (H2) para um ambiente de produção simulado com PostgreSQL rodando em Docker.
 
-Este projeto é uma aplicação de back-end simples para um sistema de e-commerce, construído com **Spring Boot** e utilizando o **JPA/Hibernate** para persistência de dados. Durante o desenvolvimento, enfrentamos e superamos desafios comuns de mapeamento de entidades e *seeding* (população inicial) do banco de dados.
+🎯 O Projeto
+O objetivo principal foi construir um modelo de domínio sólido, tratando relacionamentos complexos, segurança com OAuth2/JWT e garantindo a integridade referencial em um banco de dados relacional externo.
 
------
+Modelo de Domínio e ORM
+O sistema baseia-se em um modelo clássico de e-commerce:
 
-## 🎯 O Projeto: Jecommerce
+User & Role: Controle de acesso e perfis de usuário.
 
-### O Porquê (The Why)
+Product & Category: Relacionamento muitos-para-muitos.
 
-O objetivo principal deste projeto foi construir um modelo de domínio sólido para uma plataforma de e-commerce, focando na correta estruturação das entidades, seus relacionamentos e na persistência de dados utilizando o ecossistema Spring Boot com o banco de dados em memória **H2**.
+Order & OrderItem: Gerenciamento de pedidos com chaves compostas (@EmbeddedId).
 
-### Modelo de Domínio e ORM
+Payment: Registro de transações financeiras.
 
-O sistema é baseado em um modelo de domínio clássico de e-commerce que inclui as seguintes entidades: **User**, **Order**, **Product**, **Category**, **OrderItem** e **Payment**.
+🛠️ Tecnologias Utilizadas
+Java 21 / Spring Boot 3.4.2
 
-O diagrama abaixo ilustra as entidades e seus relacionamentos (ORM - Mapeamento Objeto-Relacional):
+Spring Data JPA (Persistência)
 
-<br>
+Spring Security (OAuth2 & JWT)
 
-As entidades foram cuidadosamente criadas, incluindo:
+PostgreSQL (Banco de Dados)
 
-  * **`User.java`**: Representa um cliente no sistema.
-  * **`Order.java`**: Representa um pedido realizado, com um status (`OrderStatus`) e uma referência ao cliente (`client`).
-  * **`OrderItemPK.java` e `OrderItem.java`**: Utilizam uma chave composta (`@EmbeddedId`) para mapear a relação muitos-para-muitos entre `Order` e `Product`.
+Docker & Docker Compose (Containerização)
 
-### Entidades Java (Exemplo)
+Postman (Testes de API)
 
-Aqui está um exemplo da entidade `Order` e a classe de chave composta `OrderItemPK` que representam os relacionamentos.
+🚀 Desafios Superados (Change Log)
+Diferente da versão inicial, o projeto evoluiu para resolver problemas reais de infraestrutura e código moderno:
 
-**Entidade `Order.java`:**
+1. Migração para PostgreSQL via Docker
+Desafio: Conflitos de criação de banco e persistência entre o Docker e o Spring.
+Solução: - Implementação do docker-compose.yml para subir o container do Postgres.
 
-**Chave Composta `OrderItemPK.java`:**
+Criação manual do banco jecommercedb para isolar os metadados do container da aplicação.
 
------
+Configuração do application-dev.properties com ddl-auto=none para maior controle do esquema via scripts SQL.
 
-## 🚀 Desafios e Resultados
+2. Correção de Named Parameters (@Param)
+Desafio: Erro java.lang.IllegalStateException: For queries with named parameters you need to provide names....
+Solução: Com a atualização para o Spring Boot 3.2+, o compilador Java pode omitir nomes de parâmetros. A solução foi tornar explícito o mapeamento nos Repositories:
 
-Durante a fase de inicialização e *seeding* do banco de dados, enfrentamos alguns desafios comuns de configuração do Hibernate e de integridade referencial.
+3. Otimização do Repositório (Git)
+Desafio: Lentidão e arquivos pesados devido ao rastreamento da pasta de dados do Docker (.data/).
+Solução: Configuração rigorosa do .gitignore e limpeza do cache do Git para manter o repositório leve, contendo apenas código-fonte.
 
-### 1\. Desafio: Inconsistência do Esquema (Schema Inconsistency)
+⚙️ Como Executar o Projeto
+Subir o Banco de Dados:
+Certifique-se de ter o Docker instalado e rode:
+docker-compose up -d
 
-O principal desafio foi a falha no *seeding* (população inicial) dos dados definidos no arquivo `import.sql`. O Hibernate, ao criar as tabelas a partir das entidades, não estava gerando algumas colunas esperadas pelo script de inserção.
+Configurar o Banco no pgAdmin:
+Crie o banco de dados chamado jecommercedb no servidor localhost:5433.
 
-```bash
-# Erro comum: Coluna não encontrada
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "PHONE" not found; 
-# ... ou
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "BIRTH_DATE" not found; 
-```
+Rodar a Aplicação:
+Importe o projeto no STS (Spring Tool Suite) e execute como Spring Boot App.
 
-**Resultado:**
-O problema foi resolvido garantindo a **sincronização exata** entre o nome da propriedade na entidade Java (ex: `phone`, `birthDate`) e o nome da coluna no script SQL, e, quando necessário, utilizando a anotação `@Column(name = "nome_da_coluna")` para forçar o mapeamento.
+Testar no Postman:
 
-### 2\. Desafio: Violação de Integridade Referencial (Foreign Key Violation)
+Realize o login em POST /oauth2/token para obter o Bearer Token.
 
-Outro erro que surgiu foi a falha ao inserir pedidos (`tb_order`), pois a chave estrangeira (`client_id`) referia-se a usuários que ainda não tinham sido persistidos no banco.
+Utilize o token para acessar os demais endpoints protegidos.
 
-```bash
-# Erro de Foreign Key
-org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException: Referential integrity constraint violation: [...]
-```
+✨ Próximos Passos
+Bean Validation: Adicionar validações customizadas nos DTOs.
 
-**Resultado:**
-Este erro foi uma **consequência** da falha anterior. Uma vez corrigida a inserção dos usuários (`tb_user`), a tabela `tb_order` pôde ser populada com sucesso, demonstrando que a ordem de execução dos `INSERTs` e a integridade do esquema foram restauradas.
+Tratamento de Exceções: Refinar o ResourceExceptionHandler para capturar erros específicos de banco.
 
-### Aplicação Rodando no Terminal (Inicialização)
-
-Após as correções, a aplicação inicia corretamente, inicializando o servidor Tomcat embutido e o banco de dados H2.
-
-### Acesso ao Console H2
-
-A aplicação está configurada para expor o console do H2 na URL `/h2-console`, conforme as propriedades em `application-test.properties`.
-
-### Dados Persistidos
-
-A prova final do sucesso foi a visualização dos dados do *seeding* no console do H2, como a tabela `TB_ORDER_ITEM` sendo preenchida:
-
------
-
-## ✨ Melhorias e Próximos Passos
-
-1.  **Segurança da Senha:** Implementar a criptografia de senhas (ex: usando `BCryptPasswordEncoder` do Spring Security) em vez de armazená-las em texto simples.
-2.  **Transição para o MySQL:** Embora o H2 seja ótimo para desenvolvimento, o projeto estava pronto para ser migrado para o MySQL/PostgreSQL (que foi testado em outras tentativas), usando o XAMPP ou outro servidor de banco de dados externo.
-3.  **Implementação de Serviços (CRUD):** Criar a camada de serviços e *controllers* REST para expor as operações CRUD (Criação, Leitura, Atualização e Deleção) das entidades.
+Testes Automatizados: Implementar testes de integração com JUnit e Mockito
