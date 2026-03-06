@@ -1,10 +1,11 @@
 package com.jeferson.jecommerce.repositories;
-
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.jeferson.jecommerce.entities.User;
@@ -22,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 			INNER JOIN tb_role ON tb_role.id = tb_user_role.role_id
 			WHERE tb_user.email = :email
 		""")
-	List<UserDetailsProjection> searchUserAndRolesByEmail(String email);
-	
+	List<UserDetailsProjection> searchUserAndRolesByEmail(@Param("email")String email);
+	// para o Postman teve que usar Param string email e o impor param acima para a homolgação ser realizada
 	Optional<User> findByEmail(String email);
 }

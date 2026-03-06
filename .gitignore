@@ -31,3 +31,15 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker ###
+.data/
+target/
+.settings/
+.classpath
+.project
+bin/
+.metadata/
+.data/
+.data/**
+**/pg_stat_tmp/*
