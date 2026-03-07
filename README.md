@@ -1,72 +1,102 @@
-Jecommerce - Spring Boot API 🚀
-Este projeto é uma aplicação back-end robusta para um sistema de e-commerce, construída com Spring Boot 3.4.2 e Java 17/21. A aplicação utiliza JPA/Hibernate para persistência de dados e foi migrada de um ambiente de teste (H2) para um ambiente de produção simulado com PostgreSQL rodando em Docker.
+##Jecommerce - Spring Boot API 🚀
+Este projeto é uma aplicação back-end robusta para um sistema de e-commerce, construída com **Spring Boot 3.4.2** e **Java 17/21**. A aplicação utiliza **JPA/Hibernate** para persistência de dados e foi migrada de um ambiente de teste **(H2)** para um ambiente de produção simulado com **PostgreSQL** rodando em **Docker**.
 
-🎯 O Projeto
-O objetivo principal foi construir um modelo de domínio sólido, tratando relacionamentos complexos, segurança com OAuth2/JWT e garantindo a integridade referencial em um banco de dados relacional externo.
+###🎯 O Projeto
+**O objetivo principal foi construir um modelo de domínio sólido, tratando relacionamentos complexos, segurança com **OAuth2/JWT** e garantindo a integridade referencial em um banco de dados relacional externo**.
 
-Modelo de Domínio e ORM
+###Modelo de Domínio e ORM
 O sistema baseia-se em um modelo clássico de e-commerce:
 
-User & Role: Controle de acesso e perfis de usuário.
+* **User & Role:** Controle de acesso e perfis de usuário.
 
-Product & Category: Relacionamento muitos-para-muitos.
+* **Product & Category:** Relacionamento muitos-para-muitos.
 
-Order & OrderItem: Gerenciamento de pedidos com chaves compostas (@EmbeddedId).
+* **Order & OrderItem:** Gerenciamento de pedidos com chaves compostas *`(@EmbeddedId)`.*
 
-Payment: Registro de transações financeiras.
+* **Payment:** Registro de transações financeiras.
 
-🛠️ Tecnologias Utilizadas
-Java 21 / Spring Boot 3.4.2
+###🛠️ Tecnologias Utilizadas
+**Java 21 / Spring Boot 3.4.2**
 
-Spring Data JPA (Persistência)
+* **Spring Data JPA** (Persistência)
 
-Spring Security (OAuth2 & JWT)
+* **Spring Security (OAuth2 & JWT)**
 
-PostgreSQL (Banco de Dados)
+* **PostgreSQL** (Banco de Dados)
 
-Docker & Docker Compose (Containerização)
+* **Docker & Docker Compose** (Containerização)
 
-Postman (Testes de API)
+* **Postman** (Testes de API)
 
-🚀 Desafios Superados (Change Log)
+###🚀 Desafios Superados e Melhorias Técnicas(*Change Log*)
 Diferente da versão inicial, o projeto evoluiu para resolver problemas reais de infraestrutura e código moderno:
 
-1. Migração para PostgreSQL via Docker
-Desafio: Conflitos de criação de banco e persistência entre o Docker e o Spring.
-Solução: - Implementação do docker-compose.yml para subir o container do Postgres.
+####1. Migração para PostgreSQL via Docker
+* Desafio: Conflitos de criação de banco e persistência entre o **Docker** e o **Spring**.
+* Solução: - Implementação do `docker-compose.yml` para subir o container do **Postgres**.
 
-Criação manual do banco jecommercedb para isolar os metadados do container da aplicação.
+* Criação manual do banco `jecommercedb` para isolar os metadados do container da aplicação.
 
-Configuração do application-dev.properties com ddl-auto=none para maior controle do esquema via scripts SQL.
+* Configuração do `application-dev.properties` com `ddl-auto=none` para maior controle do esquema via scripts *SQL*.
 
-2. Correção de Named Parameters (@Param)
-Desafio: Erro java.lang.IllegalStateException: For queries with named parameters you need to provide names....
-Solução: Com a atualização para o Spring Boot 3.2+, o compilador Java pode omitir nomes de parâmetros. A solução foi tornar explícito o mapeamento nos Repositories:
+####2. Correção de Named Parameters (*@Param*)
+* Desafio: `Erro java.lang.IllegalStateException: For queries with named parameters you need to provide names`....
+* Solução: Com a atualização para o **Spring Boot 3.2+**, o compilador **Java** pode omitir nomes de parâmetros. A solução foi tornar explícito o mapeamento nos *Repositories*:
 
-3. Otimização do Repositório (Git)
-Desafio: Lentidão e arquivos pesados devido ao rastreamento da pasta de dados do Docker (.data/).
-Solução: Configuração rigorosa do .gitignore e limpeza do cache do Git para manter o repositório leve, contendo apenas código-fonte.
+####3. Otimização do Repositório (*Git*)
+* Desafio: Lentidão e arquivos pesados devido ao rastreamento da pasta de dados do **Docker** (.`data/`).
+* Solução: Configuração rigorosa do `.gitignore` e limpeza do cache do **Git** para manter o repositório leve, contendo apenas código-fonte.
 
-⚙️ Como Executar o Projeto
-Subir o Banco de Dados:
-Certifique-se de ter o Docker instalado e rode:
-docker-compose up -d
+####4. Bean Validation & Custom Errors
+Diferente de erros genéricos, implementamos um sistema que captura falhas de validação e retorna o status **422 Unprocessable Entity**, listando exatamente qual campo falhou e por quê. As classes `ValidationError` e `FieldMessage` foram fundamentais para essa estética de resposta.
 
-Configurar o Banco no pgAdmin:
-Crie o banco de dados chamado jecommercedb no servidor localhost:5433.
+###📡 **Endpoints da API** (Testes via Postman)
+Abaixo estão os principais pontos de acesso. Utilize o *Bearer Token* após o *login* para rotas protegidas.
 
-Rodar a Aplicação:
-Importe o projeto no STS (Spring Tool Suite) e execute como Spring Boot App.
+####🔑 **Autenticação**
+* **POST** `/oauth2/token` -> *Login* e geração de *Token JWT*.
 
-Testar no Postman:
+####📦 Produtos (*Products*)
+* **GET** `/products` -> Listagem paginada de produtos.
 
-Realize o login em POST /oauth2/token para obter o Bearer Token.
+* **GET** `/products/{id}` -> Detalhes de um produto específico.
 
-Utilize o token para acessar os demais endpoints protegidos.
+* **POST** `/products` -> Inserção de novo produto (Requer privilégios ADMIN).
 
-✨ Próximos Passos
-Bean Validation: Adicionar validações customizadas nos DTOs.
+####👥 Usuários (Users)
+* **GET** `/users/me`-> Perfil do usuário logado (autenticado).
 
-Tratamento de Exceções: Refinar o ResourceExceptionHandler para capturar erros específicos de banco.
+* **POST** `/users` -> Cadastro de novos clientes.
 
-Testes Automatizados: Implementar testes de integração com JUnit e Mockito
+###🧪 Processo de Homologação (Passo a Passo)
+
+1. **Subir Container**: `docker-compose up -d`
+
+2. **Preparar Banco**: Criar o banco *jecommercedb* via pgAdmin no servidor local.
+
+3. **Execução**: Rodar a aplicação no **STS** no profile `dev`.
+
+4. **Validação**: Realizar chamadas no *Postman* e verificar se os dados refletem corretamente no *pgAdmin*.
+
+###⚙️ Como Executar o Projeto
+Subir o **Banco de Dados**:
+Certifique-se de ter o **Docker** instalado e rode:
+* `docker-compose up -d`
+
+###Configurar o Banco no pgAdmin:
+Crie o banco de dados chamado `jecommercedb` no servidor `localhost:5433`.
+
+###Rodar a Aplicação:
+Importe o projeto no **STS** (Spring Tool Suite) e execute como *Spring Boot App*.
+
+###Testar no Postman:
+
+* Realize o *login* em **POST `/oauth2/token`** para obter o **Bearer `Token`**.
+
+* Utilize o *token* para acessar os demais endpoints protegidos.
+
+###✨ Próximos Passos
+
+* **DEPLOY**: Preparar o Dockerfile para ambiente de produção
+
+* Testes Automatizados: Implementar testes de integração com JUnit e Mockito
