@@ -23,7 +23,7 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class ProductService {
 
-    @Autowired
+    //@Autowired
     private ProductRepository repository;
 
     @Transactional(readOnly = true)
