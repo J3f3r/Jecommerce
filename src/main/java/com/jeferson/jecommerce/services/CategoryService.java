@@ -2,7 +2,6 @@ package com.jeferson.jecommerce.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,7 @@ import com.jeferson.jecommerce.repositories.CategoryRepository;
 @Service
 public class CategoryService {
 
-    @Autowired
+    //@Autowired
     private CategoryRepository repository;
 
     @Transactional(readOnly = true)

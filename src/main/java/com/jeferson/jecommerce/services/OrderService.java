@@ -2,7 +2,6 @@ package com.jeferson.jecommerce.services;
 
 import java.time.Instant;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +20,37 @@ import com.jeferson.jecommerce.services.exceptions.ResourceNotFoundException;
 @Service
 public class OrderService {
 
-	 @Autowired
-	    private OrderRepository repository;
-	    
-	    @Autowired
-	    private ProductRepository productRepository;
-	    
-	    @Autowired
-	    private OrderItemRepository orderItemRepository;
-	    
-	    @Autowired
-	    private UserService userService;
-	    
-	    @Autowired
-	    private AuthService authService;
+//		Eh desaconselhada o uso do @Autowired diretamente nos atributos: Impossibilita Imutabilidade, Dificulta Testes Unitarios, Oculta Dependencias
+//	 	@Autowired
+//	    private OrderRepository repository;	    
+//	    @Autowired
+//	    private ProductRepository productRepository;	    
+//	    @Autowired
+//	    private OrderItemRepository orderItemRepository;	    
+//	    @Autowired
+//	    private UserService userService;	    
+//	    @Autowired
+//	    private AuthService authService;
+	
+	// A boa prática oficial do Spring Boot é utilizar Injeçao de Dependencia por Construtor, Quando uma classe anotada com @Service ou @Component possui apenas um construtor
+	private final OrderRepository repository;
+	private final ProductRepository productRepository;
+	private final OrderItemRepository orderItemRepository;
+	private final UserService userService;
+	private final AuthService authService;
+
+	// Construtor explicito para injeçao de dependencias
+	public OrderService(OrderRepository repository, 
+	                    ProductRepository productRepository,
+	                    OrderItemRepository orderItemRepository, 
+	                    UserService userService, 
+	                    AuthService authService) {
+		this.repository = repository;
+		this.productRepository = productRepository;
+		this.orderItemRepository = orderItemRepository;
+		this.userService = userService;
+		this.authService = authService;
+	}
 
 	    @Transactional(readOnly = true)
 	    public OrderDTO findById(Long id) {

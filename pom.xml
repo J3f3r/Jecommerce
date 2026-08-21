@@ -112,6 +112,8 @@
 						<exclude>com/jeferson/jecommerce/dto/**</exclude>
 						<exclude>com/jeferson/jecommerce/controllers/handlers/**</exclude>
 						<exclude>com/jeferson/jecommerce/services/exceptions/**</exclude>
+						<exclude>com/jeferson/jecommerce/controllers/**</exclude>
+						<exclude>com/jeferson/jecommerce/util/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>

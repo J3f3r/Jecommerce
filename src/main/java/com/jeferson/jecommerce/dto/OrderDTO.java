@@ -23,7 +23,7 @@ public class OrderDTO {
 
 	public OrderDTO(Long id, Instant moment, OrderStatus status, ClientDTO client, PaymentDTO payment,
 			List<OrderItemDTO> items) {
-		super();
+
 		this.id = id;
 		this.moment = moment;
 		this.status = status;

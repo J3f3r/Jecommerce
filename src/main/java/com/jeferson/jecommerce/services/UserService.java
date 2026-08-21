@@ -2,13 +2,9 @@ package com.jeferson.jecommerce.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +13,23 @@ import com.jeferson.jecommerce.entities.Role;
 import com.jeferson.jecommerce.entities.User;
 import com.jeferson.jecommerce.projections.UserDetailsProjection;
 import com.jeferson.jecommerce.repositories.UserRepository;
+import com.jeferson.jecommerce.util.CustomUserUtil;
 
 @Service
 public class UserService implements UserDetailsService{
 
-	@Autowired
-	private UserRepository repository;
+//	//@Autowired
+//	private UserRepository repository;	
+//	private CustomUserUtil customUserUtil;
+	
+	private final UserRepository repository;
+	private final CustomUserUtil customUserUtil;
+
+	// Construtor explícito para Injeção de Dependências
+	public UserService(UserRepository repository, CustomUserUtil customUserUtil) {
+		this.repository = repository;
+		this.customUserUtil = customUserUtil;
+	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -43,11 +50,9 @@ public class UserService implements UserDetailsService{
 		return user;
 	}// essa implementacao vai evitar o problema do Eazy Load
 	
-	protected User authenticated() {
+	protected User authenticated() {// aqui foi simplificado usando uma classe auxiliar para ser testado facilmente
 		try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
-			String username = jwtPrincipal.getClaim("username");
+			String username = customUserUtil.getLoggedUsername();
 			
 			return repository.findByEmail(username).get();
 		}
