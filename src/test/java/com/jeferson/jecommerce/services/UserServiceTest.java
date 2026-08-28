@@ -28,100 +28,120 @@ public class UserServiceTest {
 
 	@InjectMocks
 	private UserService service;
-	
+
 	@Mock
 	private UserRepository repository;
-	
+
 	@Mock
 	private CustomUserUtil userUtil;
-	
+
 	private String existingUsername, nonExistingUsername;
 	private User user;
 	private List<UserDetailsProjection> userDetails;
-	
+
 	@BeforeEach
-	void setUp() throws Exception{
-		
+	void setUp() throws Exception {
+
 		existingUsername = "maria@gmail.com";
 		nonExistingUsername = "user@gmail.com";
-		
+
 		user = UserFactory.createCustomClientUser(1L, existingUsername);
-		
+
 		userDetails = UserDetailsFactory.createCustomAdminUser(existingUsername);
-		
-		Mockito.when(repository.searchUserAndRolesByEmail(existingUsername)).thenReturn(userDetails);		
+
+		Mockito.when(repository.searchUserAndRolesByEmail(existingUsername)).thenReturn(userDetails);
 		Mockito.when(repository.searchUserAndRolesByEmail(nonExistingUsername)).thenReturn(new ArrayList<>());
-		
+
 		Mockito.when(repository.findByEmail(existingUsername)).thenReturn(Optional.of(user));
 		Mockito.when(repository.findByEmail(nonExistingUsername)).thenReturn(Optional.empty());
 	}
-	
+
 	@Test
 	public void loadUserByUsernameShouldReturnUserDetailsWhenUserExists() {
-		
+
 		UserDetails result = service.loadUserByUsername(existingUsername);
-		
+
 		Assertions.assertNotNull(result);
-		
+
 		Assertions.assertEquals(result.getUsername(), existingUsername);
+
+		// verifica efeito colateral esperado
+		Mockito.verify(repository, Mockito.times(1)).searchUserAndRolesByEmail(existingUsername);
 	}
-	
+
 	@Test
 	public void loadUserByUseernameShouldThrowsUsernameNotFoundExceptionWhenUserDoesNotExist() {
-		
+
 		Assertions.assertThrows(UsernameNotFoundException.class, () -> {
-			
+
 			service.loadUserByUsername(nonExistingUsername);
 		});
+		
+		//Para validar a chamada que DESENCADEOU a excecao
+		Mockito.verify(repository, Mockito.times(1)).searchUserAndRolesByEmail(nonExistingUsername);
 	}
-	
+
 	@Test
 	public void authenticatedShouldReturnUserWhenUserExists() {
 		// simular o getLoggedUser e retornar uma string
 		Mockito.when(userUtil.getLoggedUsername()).thenReturn(existingUsername);
-		
+
 		User result = service.authenticated();
-		
+
 		Assertions.assertNotNull(result);
-		
+
 		Assertions.assertEquals(result.getUsername(), existingUsername);
+
+		// verificacao
+		Mockito.verify(userUtil, Mockito.times(1)).getLoggedUsername();
+		Mockito.verify(repository, Mockito.times(1)).findByEmail(existingUsername);
 	}
-	
+
 	@Test
 	public void authenticatedShouldReturnThrowUsernameNotFoundExceptionWhenUserDoesNotExist() {
 		// ao fazer o cast de obter usuario que nao existe, retorna exception classcast
 		Mockito.doThrow(ClassCastException.class).when(userUtil).getLoggedUsername();
-		
+
 		Assertions.assertThrows(UsernameNotFoundException.class, () -> {
-			
+
 			service.authenticated();
 		});
+		
+		// Garante que o banco NEM FOI CONSULTADO apos a falha do utilitario
+		Mockito.verify(repository, Mockito.never()).findByEmail(Mockito.anyString());
 	}
-	
+
 	@Test
 	public void getMeShouldReturnUserDTOWhenUsernameAuthenticated() {
-		// ao mockar o authenticated() que esta dentro da mesma classe mockada, usamos spy para encapsular a instancia do objeto service
+		// ao mockar o authenticated() que esta dentro da mesma classe mockada, usamos
+		// spy para encapsular a instancia do objeto service
 		UserService spyUserService = Mockito.spy(service);
-		
+
 		Mockito.doReturn(user).when(spyUserService).authenticated();
-		
+
 		UserDTO result = spyUserService.getMe();
-		
+
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(result.getEmail(), existingUsername);
+
+		// veificacao do spy
+		Mockito.verify(spyUserService, Mockito.times(1)).authenticated();
 	}
-	
+
 	@Test
 	public void getMeShouldReturnThrowUsernameNotFoundExceptionWhenUserNotAuthenticated() {
-		
+
 		UserService spyUserService = Mockito.spy(service);
-		
+
 		Mockito.doThrow(UsernameNotFoundException.class).when(spyUserService).authenticated();
-		
+
 		Assertions.assertThrows(UsernameNotFoundException.class, () -> {
-			
+
 			@SuppressWarnings("unused")
 			UserDTO result = spyUserService.getMe();
 		});
+
+		// veificacao do spy
+		Mockito.verify(spyUserService, Mockito.times(1)).authenticated();
 	}
 }

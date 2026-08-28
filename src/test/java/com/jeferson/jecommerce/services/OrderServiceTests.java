@@ -96,6 +96,10 @@ public class OrderServiceTests {
 		
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(result.getId(), existingOrderId);
+		
+		// verifica se os metodos foram chamados pelo menos 1 vez
+		Mockito.verify(repository, Mockito.times(1)).findById(existingOrderId);
+		Mockito.verify(authService, Mockito.times(1)).validateSelfOrAdmin(any());
 	}
 	
 	@Test// sucesso
@@ -107,6 +111,9 @@ public class OrderServiceTests {
 		
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(result.getId(), existingOrderId);
+		
+		Mockito.verify(repository, Mockito.times(1)).findById(existingOrderId);
+		Mockito.verify(authService, Mockito.times(1)).validateSelfOrAdmin(any());
 	}
 	
 	@Test// falha
@@ -151,6 +158,11 @@ public class OrderServiceTests {
 		OrderDTO result = service.insert(orderDTO);
 		
 		Assertions.assertNotNull(result);
+		
+		// verificacoes de persistencia
+		Mockito.verify(userService, Mockito.times(1)).authenticated();
+		Mockito.verify(repository, Mockito.times(1)).save(any());
+		Mockito.verify(orderItemRepository, Mockito.times(1)).saveAll(any());
 	}
 	
 	@Test// falha usuario invalid

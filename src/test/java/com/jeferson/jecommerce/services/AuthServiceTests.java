@@ -18,53 +18,59 @@ public class AuthServiceTests {
 
 	@InjectMocks
 	private AuthService service;
-	
+
 	@Mock
 	private UserService userService;
-	
+
 	private User admin, selfClient, otherClient;
-	
+
 	@BeforeEach
-	void setUp() throws Exception{
-		
+	void setUp() throws Exception {
+
 		admin = UserFactory.createAdminUser();
 		selfClient = UserFactory.createCustomClientUser(1L, "Bob");
 		otherClient = UserFactory.createCustomClientUser(2L, "Ana");
 	}
-	
+
 	@Test
 	public void validateSelfOrAdminShouldDoNothingWhenAdminLogged() {
-		
+
 		Mockito.when(userService.authenticated()).thenReturn(admin);
-		
+
 		Long userId = admin.getId();
-		
+
 		Assertions.assertDoesNotThrow(() -> {
 			service.validateSelfOrAdmin(userId);
 		});
+
+		// Verificação de Comportamento (Efeito Colateral)
+		Mockito.verify(userService, Mockito.times(1)).authenticated();
 	}
-	
+
 	@Test
 	public void validateSelfOrAdminShouldDoNothingWhenSelfLogged() {
-		
+
 		Mockito.when(userService.authenticated()).thenReturn(selfClient);
-		
+
 		Long userId = selfClient.getId();
-		
+
 		Assertions.assertDoesNotThrow(() -> {
 			service.validateSelfOrAdmin(userId);
 		});
+
+		// Verificação de Comportamento (Efeito Colateral)
+		Mockito.verify(userService, Mockito.times(1)).authenticated();
 	}
-	
+
 	@Test
 	public void validateSelfOrAdminShouldThrowsForbiddenExceptionWhenClientOtherLogged() {
-		
+
 		Mockito.when(userService.authenticated()).thenReturn(selfClient);
-		
+
 		Long userId = otherClient.getId();
-		
+
 		Assertions.assertThrows(ForbiddenException.class, () -> {
-			
+
 			service.validateSelfOrAdmin(userId);
 		});
 	}

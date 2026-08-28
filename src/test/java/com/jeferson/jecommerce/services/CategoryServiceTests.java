@@ -48,5 +48,8 @@ public class CategoryServiceTests {
 		Assertions.assertEquals(result.size(), 1);
 		Assertions.assertEquals(result.get(0).getId(), category.getId());
 		Assertions.assertEquals(result.get(0).getName(), category.getName());
+
+		// Verificação (Assert de Comportamento/Efeito Colateral)
+		Mockito.verify(repository, Mockito.times(1)).findAll();
 	}
 }
