@@ -23,7 +23,11 @@ import jakarta.persistence.EntityNotFoundException;
 public class ProductService {
 
     //@Autowired
-    private ProductRepository repository;
+    private final ProductRepository repository;
+    
+    public ProductService(ProductRepository repository) {
+        this.repository = repository;
+    }
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id){
