@@ -91,12 +91,12 @@ public class User implements UserDetails{
         this.phone = phone;
     }
 
-    public LocalDate getBirtDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirtDate(LocalDate birtDate) {
-        this.birthDate = birtDate;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getPassword() {
