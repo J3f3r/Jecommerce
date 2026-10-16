@@ -82,7 +82,7 @@ Diferente de erros genéricos, implementamos um sistema que captura falhas de va
 * **Problema Resolvido:** Implementação de uma API REST corporativa para gerenciamento completo de e-commerce (usuários, produtos, categorias, pagamentos e ordens de compra), aplicando princípios SOLID, Domain-Driven Design (DDD) e tratamento de concorrência transacional.
 * **Segurança:** Autenticação e autorização *stateless* baseada em tokens **JWT (JSON Web Token)** com controle granular de acessos por perfis (**RBAC - Role-Based Access Control**) e criptografia de credenciais via BCrypt.
 * **Resiliência e Tratamento de Erros:** Arquitetura centralizada de exceções customizadas via `@ControllerAdvice`, garantindo respostas padronizadas e descritivas para falhas de validação, integridade de banco e regras de negócio.
-* **Qualidade de Software (Testes):** Suíte estruturada de **Testes Unitários** (com JUnit 5 e Mockito) e **Testes de Integração** (validando controladores, segurança e persistência).
+* **Qualidade de Software (Testes):** Suíte estruturada de **Testes Unitários** (com JUnit 5 e Mockito), **Testes de Integração** (validando controladores, segurança e persistência) e cobertura **JaCoCo**.
 
 -----
 
@@ -146,4 +146,4 @@ Importe o projeto no **STS** (Spring Tool Suite) e execute como Spring Boot App.
 
 * **DEPLOY**: Preparar o `Dockerfile` para ambiente de produção
 
-* **Testes Automatizados**: Implementar testes de API *Rest Assured* e cobertura *JaCoCo*
+* **Testes Automatizados**: Implementar testes de API *Rest Assured*
