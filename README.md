@@ -1,6 +1,11 @@
 ## Jecommerce - Spring Boot API 🚀
 <br>
-Este projeto é uma aplicação back-end robusta para um sistema de e-commerce, construída com **Spring Boot 3.4.2** e **Java 17/21**. A aplicação utiliza **JPA/Hibernate** para persistência de dados e foi migrada de um ambiente de teste **(H2)** para um ambiente de produção simulado com **PostgreSQL** rodando em **Docker**.
+[![Java 21](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
+Plataforma corporativa de E-commerce desenvolvida com arquitetura robusta em Java 21 e Spring Boot 3.x, contendo infraestrutura containerizada via Docker Compose, segurança avançada com OAuth2/JWT e rigorosos padrões de testes automatizados.
 
 -----
 
@@ -19,6 +24,14 @@ O sistema baseia-se em um modelo clássico de e-commerce:
 
 * **Payment:** Registro de transações financeiras.
 
+```mermaid
+graph TD
+    Client[Cliente / Frontend] -->|Requisição HTTP / Bearer Token| Security[Spring Security / JWT Filter]
+    Security --> Controllers[REST Controllers]
+    Controllers --> Services[Business Services]
+    Services --> Repositories[Spring Data JPA Repositories]
+    Repositories --> DB[(PostgreSQL / H2 Database)]
+```
 -----
 
 ### 🛠️ Tecnologias Utilizadas
@@ -63,6 +76,13 @@ Diferente da versão inicial, o projeto evoluiu para resolver problemas reais de
 #### 4. Bean Validation & Custom Errors
 
 Diferente de erros genéricos, implementamos um sistema que captura falhas de validação e retorna o status **422 Unprocessable Entity**, listando exatamente qual campo falhou e por quê. As classes `ValidationError` e `FieldMessage` foram fundamentais para essa estética de resposta.
+
+#### 5. 🛠️ Decisões de Arquitetura e Engenharia
+
+* **Problema Resolvido:** Implementação de uma API REST corporativa para gerenciamento completo de e-commerce (usuários, produtos, categorias, pagamentos e ordens de compra), aplicando princípios SOLID, Domain-Driven Design (DDD) e tratamento de concorrência transacional.
+* **Segurança:** Autenticação e autorização *stateless* baseada em tokens **JWT (JSON Web Token)** com controle granular de acessos por perfis (**RBAC - Role-Based Access Control**) e criptografia de credenciais via BCrypt.
+* **Resiliência e Tratamento de Erros:** Arquitetura centralizada de exceções customizadas via `@ControllerAdvice`, garantindo respostas padronizadas e descritivas para falhas de validação, integridade de banco e regras de negócio.
+* **Qualidade de Software (Testes):** Suíte estruturada de **Testes Unitários** (com JUnit 5 e Mockito) e **Testes de Integração** (validando controladores, segurança e persistência).
 
 -----
 
@@ -126,4 +146,4 @@ Importe o projeto no **STS** (Spring Tool Suite) e execute como Spring Boot App.
 
 * **DEPLOY**: Preparar o `Dockerfile` para ambiente de produção
 
-* **Testes Automatizados**: Implementar testes de integração com *JUnit* e *Mockito*
+* **Testes Automatizados**: Implementar testes de API *Rest Assured* e cobertura *JaCoCo*
