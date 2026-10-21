@@ -1,8 +1,10 @@
 ## Jecommerce - Spring Boot API 🚀
 <br>
-[![Java 21](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<p align="left">
+  <img src="https://img.shields.io/badge/Java-21-orange.svg" alt="Java 21" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg" alt="Spring Boot" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License MIT" />
+</p>
 
 
 Plataforma corporativa de E-commerce desenvolvida com arquitetura robusta em Java 21 e Spring Boot 3.x, contendo infraestrutura containerizada via Docker Compose, segurança avançada com OAuth2/JWT e rigorosos padrões de testes automatizados.
