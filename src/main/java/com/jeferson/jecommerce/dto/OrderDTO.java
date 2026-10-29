@@ -8,16 +8,27 @@ import com.jeferson.jecommerce.entities.Order;
 import com.jeferson.jecommerce.entities.OrderItem;
 import com.jeferson.jecommerce.entities.OrderStatus;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 
 public class OrderDTO {
 
+	@Schema(description = "Order ID", example = "1")
 	private Long id;
+	
+	@Schema(description = "Order moment", example = "2023-07-13T20:50:00Z")
 	private Instant moment;
+	
+	@Schema(description = "Order status", example = "WAITING_PAYMENT")
 	private OrderStatus status;
+	
+	@Schema(description = "Order client")
 	private ClientDTO client;
+	
+	@Schema(description = "Order payment details")
 	private PaymentDTO payment;
 	
+	@Schema(description = "Order items")
 	@NotEmpty(message = "Deve ter pelo menos um item")
 	private List<OrderItemDTO> items = new ArrayList<>();
 
