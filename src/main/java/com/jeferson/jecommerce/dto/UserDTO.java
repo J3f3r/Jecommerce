@@ -8,14 +8,26 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.jeferson.jecommerce.entities.User;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class UserDTO {
 
+	@Schema(description = "User ID", example = "1")
 	private Long id;
+	
+	@Schema(description = "User name", example = "Maria Brown")
 	private String name;
+	
+	@Schema(description = "User email address", example = "maria@gmail.com")
 	private String email;
+	
+	@Schema(description = "User phone number", example = "(99)99999-9999")
 	private String phone;
+	
+	@Schema(description = "User birth date", example = "1998-07-13")
 	private LocalDate birthDate;
 	
+	@Schema(description = "User roles")
 	List<String> roles = new ArrayList<>();
 	
 	public UserDTO() {}
