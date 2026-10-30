@@ -144,6 +144,14 @@ Importe o projeto no **STS** (Spring Tool Suite) e execute como Spring Boot App.
 
 -----
 
+## 📚 API Documentation
+
+The **JeCommerce** API is fully documented using OpenAPI 3 (SpringDoc) and integrated with a professional developer portal on Readme.com.
+
+* **Interactive Developer Portal (Readme.com):** [JeCommerce API Reference](https://jecommerce.readme.io/)[cite: 9]// but it is not free after 14 days
+* **Local Swagger UI:** `http://localhost:8080/swagger-ui/index.html` (Available when running the application locally)
+
+-----
 ###✨ Próximos Passos
 
 * **DEPLOY**: Preparar o `Dockerfile` para ambiente de produção
