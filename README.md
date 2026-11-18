@@ -1,30 +1,33 @@
-## Jecommerce - Spring Boot API 🚀
-<br>
-<p align="left">
+# JeCommerce - API REST de E-commerce com Spring Boot, OAuth2/JWT e PostgreSQL
+
+<p align="center">
   <img src="https://img.shields.io/badge/Java-21-orange.svg" alt="Java 21" />
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg" alt="Spring Boot" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.4-brightgreen.svg" alt="Spring Boot" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Docker-blue.svg" alt="PostgreSQL com Docker" />
+  <img src="https://img.shields.io/badge/Testes-JUnit%20%7C%20Mockito%20%7C%20JaCoCo-green.svg" alt="Testes" />
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License MIT" />
 </p>
 
+API REST de e-commerce desenvolvida com **Java 21** e **Spring Boot 3.4**, em arquitetura em camadas, com **PostgreSQL** em container (Docker Compose), autenticação **OAuth2/JWT** e testes automatizados.
 
-Plataforma corporativa de E-commerce desenvolvida com arquitetura robusta em Java 21 e Spring Boot 3.x, contendo infraestrutura containerizada via Docker Compose, segurança avançada com OAuth2/JWT e rigorosos padrões de testes automatizados.
+O projeto parte da trilha prática da **DevSuperior** e foi evoluído de forma incremental com implementações próprias (infraestrutura com Docker, validação, tratamento de erros, documentação OpenAPI e testes).
 
------
+> **Uso de IA:** utilizei IA como apoio para investigar problemas, refatorar e construir testes. As sugestões foram avaliadas e validadas com a leitura do código e com a execução dos testes.
 
-### 🎯 O Projeto
-<br>
-**O objetivo principal foi construir um modelo de domínio sólido, tratando relacionamentos complexos, segurança com **OAuth2/JWT** e garantindo a integridade referencial em um banco de dados relacional externo**.
+---
 
-### Modelo de Domínio e ORM
-O sistema baseia-se em um modelo clássico de e-commerce:
-<br>
-* **User & Role:** Controle de acesso e perfis de usuário.
+## 🎯 O Projeto
 
-* **Product & Category:** Relacionamento muitos-para-muitos.
+O objetivo foi construir um modelo de domínio sólido, lidando com relacionamentos complexos entre entidades, segurança com **OAuth2/JWT** e integridade referencial em um banco relacional (PostgreSQL).
 
-* **Order & OrderItem:** Gerenciamento de pedidos com chaves compostas *`(@EmbeddedId)`.*
+### Modelo de Domínio
 
-* **Payment:** Registro de transações financeiras.
+* **User e Role:** usuários e perfis de acesso.
+* **Product e Category:** relacionamento muitos-para-muitos.
+* **Order e OrderItem:** pedidos e itens, com chave composta (`@EmbeddedId`).
+* **Payment:** registro do pagamento de um pedido.
+
+### Arquitetura (visão geral)
 
 ```mermaid
 graph TD
@@ -32,128 +35,138 @@ graph TD
     Security --> Controllers[REST Controllers]
     Controllers --> Services[Business Services]
     Services --> Repositories[Spring Data JPA Repositories]
-    Repositories --> DB[(PostgreSQL / H2 Database)]
+    Repositories --> DB[(PostgreSQL)]
 ```
------
 
-### 🛠️ Tecnologias Utilizadas
-<br>
-* **Java 21 / Spring Boot 3.4.2**
+---
 
-* **Spring Data JPA** (Persistência)
+## 🛠️ Tecnologias Utilizadas
 
-* **Spring Security (OAuth2 & JWT)**
+* **Java 21** e **Spring Boot 3.4.2**
+* **Spring Data JPA** (persistência)
+* **Spring Security** (OAuth2 e JWT)
+* **PostgreSQL** (banco de dados)
+* **Docker e Docker Compose** (banco em container)
+* **Bean Validation** (validação de entrada)
+* **JUnit 5, Mockito e JaCoCo** (testes e cobertura)
+* **SpringDoc** (OpenAPI 3 / Swagger UI)
+* **Postman** (testes manuais da API)
 
-* **PostgreSQL** (Banco de Dados)
+---
 
-* **Docker & Docker Compose** (Containerização)
+## 🧱 Decisões de Arquitetura e Engenharia
 
-* **Postman** (Testes de API)
+* **Segurança:** autenticação e autorização *stateless* com **JWT**, controle de acesso por perfis (**RBAC**, ex.: ADMIN e cliente) e senhas com **BCrypt**.
+* **Tratamento de erros:** exceções centralizadas com `@ControllerAdvice`, que devolvem respostas padronizadas para falhas de validação, integridade de dados e regras de negócio.
+* **Validação:** **Bean Validation**, com resposta **422 Unprocessable Entity** que informa qual campo falhou e o motivo (classes `ValidationError` e `FieldMessage`).
+* **Banco de dados:** perfil `dev` com `ddl-auto=none`, e esquema criado por scripts SQL, para ter controle sobre a estrutura das tabelas.
+* **Testes:** testes unitários (JUnit 5 e Mockito) e testes de integração (controladores, segurança e persistência), com cobertura medida pelo **JaCoCo**.
 
------
+---
 
-### 🚀 Desafios Superados e Melhorias Técnicas(*Change Log*)
-Diferente da versão inicial, o projeto evoluiu para resolver problemas reais de infraestrutura e código moderno:
-<br>
-#### 1. Migração para PostgreSQL via Docker
+## 🚀 Desafios Superados e Melhorias Técnicas (*Change Log*)
 
-* Desafio: Conflitos de criação de banco e persistência entre o **Docker** e o **Spring**.
+### 1. Migração para PostgreSQL com Docker
+* **Desafio:** conflitos de criação do banco e de persistência entre o Docker e o Spring.
+* **Solução:**
+  * `docker-compose.yml` para subir o container do PostgreSQL.
+  * Criação manual do banco `jecommercedb`, separando os metadados do container dos dados da aplicação.
+  * `application-dev.properties` com `ddl-auto=none`, com o esquema controlado por scripts SQL.
 
-* Solução: - Implementação do `docker-compose.yml` para subir o container do **Postgres**.
+### 2. Parâmetros nomeados em consultas (`@Param`)
+* **Desafio:** erro `java.lang.IllegalStateException: For queries with named parameters you need to provide names`.
+* **Causa:** a partir do Spring Boot 3.2, o nome dos parâmetros do método pode não estar disponível em tempo de execução.
+* **Solução:** declarar o nome explicitamente com `@Param` nos repositórios. Exemplo ilustrativo:
 
-* Criação manual do banco `jecommercedb` para isolar os metadados do container da aplicação.
+```java
+@Query("SELECT obj FROM Product obj WHERE UPPER(obj.name) LIKE UPPER(CONCAT('%', :name, '%'))")
+Page<Product> searchByName(@Param("name") String name, Pageable pageable);
+```
 
-* Configuração do `application-dev.properties` com `ddl-auto=none` para maior controle do esquema via scripts *SQL*.
+### 3. Repositório Git leve
+* **Desafio:** lentidão e arquivos pesados por causa do rastreamento da pasta de dados do Docker (`.data/`).
+* **Solução:** `.gitignore` ajustado e limpeza do cache do Git, mantendo no repositório só o código-fonte.
 
-#### 2. Correção de Named Parameters (*@Param*)
+### 4. Bean Validation e respostas de erro customizadas
+* **Desafio:** devolver erros de validação claros em vez de mensagens genéricas.
+* **Solução:** captura das falhas de validação com resposta **422**, listando o campo e o motivo de cada erro (`ValidationError` e `FieldMessage`).
 
-* Desafio: `Erro java.lang.IllegalStateException: For queries with named parameters you need to provide names`....
-* Solução: Com a atualização para o **Spring Boot 3.2+**, o compilador **Java** pode omitir nomes de parâmetros. A solução foi tornar explícito o mapeamento nos *Repositories*:
+---
 
-#### 3. Otimização do Repositório (*Git*)
+## 📡 Endpoints Principais
 
-* Desafio: Lentidão e arquivos pesados devido ao rastreamento da pasta de dados do **Docker** (.`data/`).
-* Solução: Configuração rigorosa do `.gitignore` e limpeza do cache do **Git** para manter o repositório leve, contendo apenas código-fonte.
+Use o *Bearer Token* obtido no login nas rotas protegidas. A lista completa está na documentação OpenAPI (seção abaixo).
 
-#### 4. Bean Validation & Custom Errors
+| Método | Rota | Descrição | Acesso |
+|---|---|---|---|
+| `POST` | `/oauth2/token` | Login e geração do token JWT | Público |
+| `GET` | `/products` | Lista paginada de produtos | Público |
+| `GET` | `/products/{id}` | Detalhes de um produto | Público |
+| `POST` | `/products` | Cadastro de produto | ADMIN |
+| `GET` | `/users/me` | Perfil do usuário autenticado | Autenticado |
+| `POST` | `/users` | Cadastro de cliente | Público |
 
-Diferente de erros genéricos, implementamos um sistema que captura falhas de validação e retorna o status **422 Unprocessable Entity**, listando exatamente qual campo falhou e por quê. As classes `ValidationError` e `FieldMessage` foram fundamentais para essa estética de resposta.
+<!-- TODO: confira a coluna "Acesso" com o que está configurado na sua classe de segurança (ResourceServerConfig)
+     e ajuste se algum endpoint tiver regra diferente. -->
 
-#### 5. 🛠️ Decisões de Arquitetura e Engenharia
+---
 
-* **Problema Resolvido:** Implementação de uma API REST corporativa para gerenciamento completo de e-commerce (usuários, produtos, categorias, pagamentos e ordens de compra), aplicando princípios SOLID, Domain-Driven Design (DDD) e tratamento de concorrência transacional.
-* **Segurança:** Autenticação e autorização *stateless* baseada em tokens **JWT (JSON Web Token)** com controle granular de acessos por perfis (**RBAC - Role-Based Access Control**) e criptografia de credenciais via BCrypt.
-* **Resiliência e Tratamento de Erros:** Arquitetura centralizada de exceções customizadas via `@ControllerAdvice`, garantindo respostas padronizadas e descritivas para falhas de validação, integridade de banco e regras de negócio.
-* **Qualidade de Software (Testes):** Suíte estruturada de **Testes Unitários** (com JUnit 5 e Mockito), **Testes de Integração** (validando controladores, segurança e persistência) e cobertura **JaCoCo**.
+## ⚙️ Como Executar
 
------
+**Pré-requisitos:** JDK 21, Docker e Docker Compose.
 
-### 📡 **Endpoints da API** (Testes via Postman)
+1. **Subir o banco de dados**
+   ```bash
+   docker-compose up -d
+   ```
+2. **Preparar o banco (pgAdmin)**
+   * Crie o banco `jecommercedb` no servidor `localhost:5432`.
+   * No *Query Tool*, execute o script `create.sql` para criar e popular as tabelas.
+3. **Executar a aplicação** com o profile `dev`, no STS (como *Spring Boot App*) ou pelo terminal:
+   ```bash
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+   ```
+4. **Testar no Postman**
+   * Faça o login em `POST /oauth2/token` para obter o *Bearer Token*.
+   * Use o token nas rotas protegidas e confira os dados no pgAdmin.
 
-Abaixo estão os principais pontos de acesso. Utilize o *Bearer Token* após o *login* para rotas protegidas.
+### Testes e cobertura
 
-#### 🔑 **Autenticação**
+```bash
+./mvnw clean verify
+```
 
-* **POST** `/oauth2/token` -> *Login* e geração de *Token JWT*.
+<!-- TODO: informe o caminho do relatório do JaCoCo neste projeto (ex.: target/site/jacoco/index.html)
+     e, quando a cobertura voltar a 100% após os incrementos, acrescente a frase com o mês da medição. -->
 
-#### 📦 Produtos (*Products*)
+---
 
-* **GET** `/products` -> Listagem paginada de produtos.
+## ⚙️ Variáveis de Ambiente
 
-* **GET** `/products/{id}` -> Detalhes de um produto específico.
+<!-- TODO: liste aqui as variáveis que o projeto lê (nomes exatos do application.properties), com valores de EXEMPLO,
+     por exemplo: usuário/senha do banco, client id/secret do OAuth2 e duração do token. Nunca coloque valores reais. -->
 
-* **POST** `/products` -> Inserção de novo produto (Requer privilégios ADMIN).
+---
 
-#### 👥 Usuários (Users)
+## 📚 Documentação da API
 
-* **GET** `/users/me`-> Perfil do usuário logado (autenticado).
+A API é documentada com **OpenAPI 3 (SpringDoc)**, com suporte a autenticação **JWT Bearer** na interface do Swagger.
 
-* **POST** `/users` -> Cadastro de novos clientes.
+* **Swagger UI (local):** `http://localhost:8080/swagger-ui/index.html` (com a aplicação em execução)
+* **Portal de documentação (Readme.com):** [Referência da API do JeCommerce](https://jecommerce.readme.io/)
 
------
+<!-- Sugestão: adicione um print da tela do Swagger UI, por exemplo: ![Swagger UI](docs/swagger.png) -->
 
-### 🧪 Processo de Homologação (Passo a Passo)
+---
 
-1. **Subir Container**: `docker-compose up -d`
+## ✨ Próximos Passos
 
-2. **Preparar Banco**: Criar o banco *jecommercedb* via pgAdmin no servidor local.
+* **Deploy:** preparar o `Dockerfile` para ambiente de produção.
+* **Testes:** ampliar os testes de API (ex.: Rest Assured) e recompor a cobertura do JaCoCo após os novos incrementos.
 
-3. **Execução**: Rodar a aplicação no **STS** no profile `dev`.
+---
 
-4. **Validação**: Realizar chamadas no *Postman* e verificar se os dados refletem corretamente no *pgAdmin*.
+## 👤 Autor
 
------
-
-### ⚙️ Como Executar o Projeto
-
-1. **Subir o Banco de Dados**:
-Certifique-se de ter o Docker instalado e rode: `docker-compose up -d`
-
-2. **Configurar o Banco no pgAdmin**:
-* Crie o banco de dados chamado jecommercedb no servidor localhost:5432.
-* Use `create.sql` em *Tables* com Query *Tool para povoar* o *db*
-
-3. **Rodar a Aplicação**:
-Importe o projeto no **STS** (Spring Tool Suite) e execute como Spring Boot App.
-
-4. **Testar no Postman**:
-
-* Realize o login em POST /oauth2/token para obter o Bearer Token.
-
-* Utilize o token para acessar os demais endpoints protegidos.
-
------
-
-## 📚 API Documentation
-
-The **JeCommerce** API is fully documented using OpenAPI 3 (SpringDoc) and integrated with a professional developer portal on Readme.com.
-
-* **Interactive Developer Portal (Readme.com):** [JeCommerce API Reference](https://jecommerce.readme.io/)[cite: 9]// but it is not free after 14 days
-* **Local Swagger UI:** `http://localhost:8080/swagger-ui/index.html` (Available when running the application locally)
-
------
-###✨ Próximos Passos
-
-* **DEPLOY**: Preparar o `Dockerfile` para ambiente de produção
-
-* **Testes Automatizados**: Implementar testes de API *Rest Assured*
+**Jeferson Martins** - Desenvolvedor Backend Java Júnior
+[LinkedIn](https://www.linkedin.com/in/jefersonmartins-48b9b690) | [GitHub](https://github.com/J3f3r)
