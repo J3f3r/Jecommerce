@@ -162,7 +162,7 @@ A API é documentada com **OpenAPI 3 (SpringDoc)**, com suporte a autenticação
 ## ✨ Próximos Passos
 
 * **Deploy:** preparar o `Dockerfile` para ambiente de produção.
-* **Testes:** ampliar os testes de API (ex.: Rest Assured) e recompor a cobertura do JaCoCo após os novos incrementos.
+* **Testes:** ampliar os testes de API e recompor a cobertura do JaCoCo após os novos incrementos.
 
 ---
 
