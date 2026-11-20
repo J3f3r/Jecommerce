@@ -169,4 +169,4 @@ A API é documentada com **OpenAPI 3 (SpringDoc)**, com suporte a autenticação
 ## 👤 Autor
 
 **Jeferson Martins** - Desenvolvedor Backend Java Júnior
-[LinkedIn](https://www.linkedin.com/in/jefersonmartins-48b9b690) | [GitHub](https://github.com/J3f3r)
+[LinkedIn](https://www.linkedin.com/in/jeferson-martins-48b9b690) | [GitHub](https://github.com/J3f3r)
